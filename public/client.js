@@ -4,12 +4,16 @@ const remoteVideo = document.getElementById('remoteVideo');
 const statusText = document.getElementById('status');
 const startButton = document.getElementById('startButton');
 const cameraSelect = document.getElementById('cameraSelect');
+const muteButton = document.getElementById('muteButton');
+const videoButton = document.getElementById('videoButton');
 
 let localStream = null;
 let peerConnection = null;
 let roomId = null;
 let isInitiator = false;
 let selectedCameraId = null;
+let isAudioEnabled = false;
+let isVideoEnabled = true;
 
 const configuration = {
   iceServers: [
@@ -36,6 +40,8 @@ async function initLocalStream() {
 
     localVideo.srcObject = localStream;
     await updateCameraList();
+    updateMuteButton();
+    updateVideoButton();
     statusText.textContent = 'Clique em Iniciar conversa para se conectar';
     startButton.disabled = false;
   } catch (error) {
@@ -68,6 +74,46 @@ async function updateCameraList() {
   } catch (error) {
     console.error('Erro ao listar câmeras:', error);
   }
+}
+
+function updateMuteButton() {
+  const audioTrack = localStream?.getAudioTracks()[0];
+  if (!audioTrack) {
+    muteButton.disabled = true;
+    return;
+  }
+  isAudioEnabled = audioTrack.enabled;
+  muteButton.textContent = isAudioEnabled ? 'Silenciar micro' : 'Ativar som';
+}
+
+function updateVideoButton() {
+  const videoTrack = localStream?.getVideoTracks()[0];
+  if (!videoTrack) {
+    videoButton.disabled = true;
+    return;
+  }
+  isVideoEnabled = videoTrack.enabled;
+  videoButton.textContent = isVideoEnabled ? 'Parar vídeo' : 'Ativar vídeo';
+}
+
+async function toggleMic() {
+  const audioTrack = localStream?.getAudioTracks()[0];
+  if (!audioTrack) {
+    return;
+  }
+  audioTrack.enabled = !audioTrack.enabled;
+  updateMuteButton();
+  updateStatus(audioTrack.enabled ? 'Microfone ativado' : 'Microfone silenciado');
+}
+
+async function toggleVideo() {
+  const videoTrack = localStream?.getVideoTracks()[0];
+  if (!videoTrack) {
+    return;
+  }
+  videoTrack.enabled = !videoTrack.enabled;
+  updateVideoButton();
+  updateStatus(videoTrack.enabled ? 'Vídeo ativado' : 'Vídeo desativado');
 }
 
 async function switchCamera(deviceId) {
@@ -135,10 +181,6 @@ function createPeerConnection() {
 
 async function startCall() {
   startButton.disabled = true;
-  const audioTracks = localStream?.getAudioTracks() || [];
-  audioTracks.forEach((track) => {
-    track.enabled = true;
-  });
   updateStatus('Procurando outra pessoa...');
   socket.emit('join');
 }
@@ -190,5 +232,7 @@ cameraSelect.addEventListener('change', async () => {
   await switchCamera(cameraSelect.value);
 });
 
+muteButton.addEventListener('click', toggleMic);
+videoButton.addEventListener('click', toggleVideo);
 startButton.addEventListener('click', startCall);
 initLocalStream();
