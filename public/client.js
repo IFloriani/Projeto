@@ -184,13 +184,20 @@ function createPeerConnection() {
 
 async function startCall() {
   startButton.disabled = true;
+  startButton.classList.add('loading');
+  startButton.textContent = 'Procurando...';
   updateStatus('Procurando outra pessoa...', true);
   socket.emit('join');
 }
 
 socket.on('status', (message) => {
-  updateStatus(message, message.includes('Aguardando') || message.includes('Procurando'));
-  updateStatus(message);
+  const loading = message.includes('Aguardando') || message.includes('Procurando');
+  updateStatus(message, loading);
+
+  if (!loading) {
+    startButton.classList.remove('loading');
+    startButton.textContent = 'Começar o match';
+  }
 });
 
 socket.on('matched', async (data) => {

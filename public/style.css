@@ -167,6 +167,18 @@ video {
   }
 }
 
+@keyframes pulse {
+  0%, 100% {
+    transform: translateY(0);
+    box-shadow: 0 18px 30px rgba(66, 114, 255, 0.24);
+  }
+
+  50% {
+    transform: translateY(-2px);
+    box-shadow: 0 24px 36px rgba(66, 114, 255, 0.28);
+  }
+}
+
 .camera-control {
   margin-top: 18px;
   display: flex;
@@ -214,7 +226,12 @@ video {
   font-size: 1rem;
   cursor: pointer;
   box-shadow: 0 18px 30px rgba(66, 114, 255, 0.24);
-  transition: transform 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+  transition: transform 180ms ease, box-shadow 180ms ease, opacity 180ms ease, filter 180ms ease;
+}
+
+#startButton.loading {
+  animation: pulse 1.2s ease-in-out infinite;
+  filter: brightness(1.05);
 }
 
 #startButton:hover:not(:disabled) {
