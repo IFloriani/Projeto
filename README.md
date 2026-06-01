@@ -23,5 +23,5 @@ npm start
 - Conecta você automaticamente a outra pessoa que esteja aguardando
 - Usa WebRTC para transmitir vídeo e áudio
 - Faz pareamento aleatório de dois visitantes
-- Permite silenciar o microfone e desligar a câmera
+- Permite silenciar o microfone, desligar a câmera e enviar mensagens de texto
 - É responsivo para celulares e tablets

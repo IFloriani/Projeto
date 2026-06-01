@@ -6,6 +6,9 @@ const startButton = document.getElementById('startButton');
 const cameraSelect = document.getElementById('cameraSelect');
 const muteButton = document.getElementById('muteButton');
 const videoButton = document.getElementById('videoButton');
+const chatForm = document.getElementById('chatForm');
+const chatInput = document.getElementById('chatInput');
+const chatWindow = document.getElementById('chatWindow');
 
 let localStream = null;
 let peerConnection = null;
@@ -151,6 +154,19 @@ async function switchCamera(deviceId) {
 
 const loader = document.getElementById('loader');
 
+function setChatEnabled(enabled) {
+  chatInput.disabled = !enabled;
+  chatForm.querySelector('button').disabled = !enabled;
+}
+
+function addChatMessage(text, type) {
+  const message = document.createElement('div');
+  message.className = `chat-message ${type}`;
+  message.textContent = text;
+  chatWindow.appendChild(message);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
 function updateStatus(message, showLoading = false) {
   statusText.textContent = message;
   loader.classList.toggle('active', showLoading);
@@ -190,6 +206,18 @@ async function startCall() {
   socket.emit('join');
 }
 
+chatForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const text = chatInput.value.trim();
+  if (!text || !roomId) {
+    return;
+  }
+
+  addChatMessage(text, 'sent');
+  socket.emit('message', { roomId, text });
+  chatInput.value = '';
+});
+
 socket.on('status', (message) => {
   const loading = message.includes('Aguardando') || message.includes('Procurando');
   updateStatus(message, loading);
@@ -204,6 +232,8 @@ socket.on('matched', async (data) => {
   roomId = data.roomId;
   isInitiator = data.initiator;
   updateStatus('Par conectado! Preparando chamada...', true);
+  addChatMessage('Você está conectado. Use o chat se precisar.', 'received');
+  setChatEnabled(true);
 
   createPeerConnection();
 
@@ -237,6 +267,14 @@ socket.on('signal', async (data) => {
 
 socket.on('partner-disconnected', () => {
   updateStatus('O parceiro saiu da conversa. Recarregue para tentar novamente.', false);
+  addChatMessage('Seu parceiro saiu da conversa.', 'received');
+  setChatEnabled(false);
+});
+
+socket.on('message', ({ text }) => {
+  if (typeof text === 'string') {
+    addChatMessage(text, 'received');
+  }
 });
 
 cameraSelect.addEventListener('change', async () => {

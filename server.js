@@ -54,6 +54,12 @@ io.on('connection', (socket) => {
       }
     }
 
+    if (event === 'message') {
+      if (!payload || typeof payload.roomId !== 'string' || typeof payload.text !== 'string') {
+        return next(new Error('Payload de mensagem inválido'));
+      }
+    }
+
     next();
   });
 
@@ -85,6 +91,14 @@ io.on('connection', (socket) => {
 
   socket.on('signal', ({ roomId, data }) => {
     socket.to(roomId).emit('signal', data);
+  });
+
+  socket.on('message', ({ roomId, text }) => {
+    if (typeof roomId !== 'string' || typeof text !== 'string' || !text.trim()) {
+      return;
+    }
+
+    socket.to(roomId).emit('message', { text: text.trim() });
   });
 
   socket.on('disconnect', () => {

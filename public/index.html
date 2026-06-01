@@ -60,8 +60,20 @@
           </article>
         </section>
 
+        <section class="chat-panel">
+          <div class="chat-header">
+            <h3>Chat de texto</h3>
+            <p>Use quando não tiver microfone ou para compartilhar links.</p>
+          </div>
+          <div id="chatWindow" class="chat-window"></div>
+          <form id="chatForm" class="chat-form">
+            <input id="chatInput" type="text" placeholder="Escreva uma mensagem..." autocomplete="off" disabled />
+            <button type="submit" disabled>Enviar</button>
+          </form>
+        </section>
+
         <section class="privacy-note">
-          <p>O MatchCam não grava suas conversas. A conexão de áudio/vídeo é direta entre os usuários e o servidor só faz a sinalização.</p>
+          <p>O MatchCam não grava suas conversas. A conexão de áudio/vídeo e mensagens é direta entre os usuários e o servidor só faz a sinalização e o repasse de texto.</p>
         </section>
       </main>
     </div>
