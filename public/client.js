@@ -149,8 +149,11 @@ async function switchCamera(deviceId) {
   }
 }
 
-function updateStatus(message) {
+const loader = document.getElementById('loader');
+
+function updateStatus(message, showLoading = false) {
   statusText.textContent = message;
+  loader.classList.toggle('active', showLoading);
 }
 
 function createPeerConnection() {
@@ -172,27 +175,28 @@ function createPeerConnection() {
 
   peerConnection.onconnectionstatechange = () => {
     if (peerConnection.connectionState === 'connected') {
-      updateStatus('Conectado! Aproveite a conversa.');
+      updateStatus('Conectado! Aproveite a conversa.', false);
     } else if (peerConnection.connectionState === 'disconnected' || peerConnection.connectionState === 'failed') {
-      updateStatus('Conexão perdida. Recarregue a página para tentar novamente.');
+      updateStatus('Conexão perdida. Recarregue a página para tentar novamente.', false);
     }
   };
 }
 
 async function startCall() {
   startButton.disabled = true;
-  updateStatus('Procurando outra pessoa...');
+  updateStatus('Procurando outra pessoa...', true);
   socket.emit('join');
 }
 
 socket.on('status', (message) => {
+  updateStatus(message, message.includes('Aguardando') || message.includes('Procurando'));
   updateStatus(message);
 });
 
 socket.on('matched', async (data) => {
   roomId = data.roomId;
   isInitiator = data.initiator;
-  updateStatus('Par conectado! Preparando chamada...');
+  updateStatus('Par conectado! Preparando chamada...', true);
 
   createPeerConnection();
 
@@ -225,7 +229,7 @@ socket.on('signal', async (data) => {
 });
 
 socket.on('partner-disconnected', () => {
-  updateStatus('O parceiro saiu da conversa. Recarregue para tentar novamente.');
+  updateStatus('O parceiro saiu da conversa. Recarregue para tentar novamente.', false);
 });
 
 cameraSelect.addEventListener('change', async () => {

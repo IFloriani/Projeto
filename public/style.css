@@ -147,6 +147,26 @@ video {
   text-align: center;
 }
 
+.loader {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.16);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  display: none;
+}
+
+.loader.active {
+  display: inline-block;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .camera-control {
   margin-top: 18px;
   display: flex;
