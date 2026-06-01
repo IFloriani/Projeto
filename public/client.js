@@ -175,6 +175,12 @@ function updateStatus(message, showLoading = false) {
 function createPeerConnection() {
   peerConnection = new RTCPeerConnection(configuration);
 
+  if (!localStream) {
+    console.error('localStream não está disponível');
+    updateStatus('Erro: câmera não acessível. Recarregue a página.');
+    return;
+  }
+
   for (const track of localStream.getTracks()) {
     peerConnection.addTrack(track, localStream);
   }
@@ -199,6 +205,14 @@ function createPeerConnection() {
 }
 
 async function startCall() {
+  if (!localStream) {
+    updateStatus('Câmera não está disponível. Recarregue a página.');
+    startButton.disabled = false;
+    startButton.classList.remove('loading');
+    startButton.textContent = 'Começar o match';
+    return;
+  }
+
   startButton.disabled = true;
   startButton.classList.add('loading');
   startButton.textContent = 'Procurando...';
