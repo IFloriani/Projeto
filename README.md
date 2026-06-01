@@ -1,4 +1,4 @@
-# Chat de Vídeo Aleatório
+# MatchCam
 
 Projeto simples de chat por vídeo usando WebRTC e Socket.IO.
 

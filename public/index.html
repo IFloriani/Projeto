@@ -3,14 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chat de Vídeo Aleatório</title>
+    <title>MatchCam</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="page">
       <header>
-        <h1>Chat de Vídeo Aleatório</h1>
-        <p>Conecte-se a outra pessoa e converse por vídeo. Você será pareado automaticamente.</p>
+        <div class="brand-bar">
+          <span class="brand-mark">MC</span>
+          <span class="brand-name">MatchCam</span>
+        </div>
+        <h1>Conecte-se com alguém novo agora</h1>
+        <p>Entre em uma sala aleatória por vídeo e fale com pessoas diferentes em tempo real.</p>
       </header>
 
       <main>
@@ -32,8 +36,23 @@
 
         <div class="status-box">
           <p id="status">Carregando...</p>
-          <button id="startButton">Iniciar conversa</button>
+          <button id="startButton">Começar o match</button>
         </div>
+
+        <section class="info-grid">
+          <article>
+            <h3>Modo aleatório</h3>
+            <p>Seu par é escolhido automaticamente quando outra pessoa entra.</p>
+          </article>
+          <article>
+            <h3>Vídeo em tempo real</h3>
+            <p>Use WebRTC para conversa suave com vídeo e áudio direto no navegador.</p>
+          </article>
+          <article>
+            <h3>Segurança simples</h3>
+            <p>Sem cadastro. Sem complicação. Apenas entre e converse.</p>
+          </article>
+        </section>
       </main>
     </div>
 
