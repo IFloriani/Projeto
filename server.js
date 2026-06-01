@@ -1,11 +1,27 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
+const helmet = require('helmet');
 const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+
+app.use(helmet());
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", 'https://cdn.socket.io'],
+    connectSrc: ["'self'", 'ws:', 'wss:'],
+    styleSrc: ["'self'", "'unsafe-inline'"],
+    imgSrc: ["'self'", 'data:'],
+    objectSrc: ["'none'"],
+    frameAncestors: ["'none'"],
+    baseUri: ["'self'"],
+    formAction: ["'self'"]
+  }
+}));
 
 const publicPath = path.join(__dirname, 'public');
 app.use(express.static(publicPath));
@@ -20,10 +36,38 @@ function createRoomId() {
 io.on('connection', (socket) => {
   console.log('Cliente conectado:', socket.id);
 
-  if (!waitingSocket) {
-    waitingSocket = socket.id;
-    socket.emit('status', 'Aguardando outra pessoa...');
-  } else {
+  socket.emit('status', 'Clique em Iniciar conversa para ser pareado.');
+
+  socket.use(([event, payload], next) => {
+    if (typeof event !== 'string') {
+      return next(new Error('Evento inválido'));
+    }
+
+    if (event === 'signal') {
+      if (!payload || typeof payload.roomId !== 'string' || typeof payload.data !== 'object') {
+        return next(new Error('Payload de sinal inválido'));
+      }
+
+      const { data } = payload;
+      if (!['offer', 'answer', 'ice-candidate'].includes(data.type)) {
+        return next(new Error('Tipo de sinal inválido'));
+      }
+    }
+
+    next();
+  });
+
+  socket.on('join', () => {
+    if (waitingSocket === socket.id) {
+      return;
+    }
+
+    if (!waitingSocket) {
+      waitingSocket = socket.id;
+      socket.emit('status', 'Aguardando outra pessoa...');
+      return;
+    }
+
     const roomId = createRoomId();
     const first = waitingSocket;
     const second = socket.id;
@@ -37,7 +81,7 @@ io.on('connection', (socket) => {
 
     io.to(first).emit('matched', { roomId, initiator: false });
     socket.emit('matched', { roomId, initiator: true });
-  }
+  });
 
   socket.on('signal', ({ roomId, data }) => {
     socket.to(roomId).emit('signal', data);

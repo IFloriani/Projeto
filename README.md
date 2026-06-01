@@ -2,6 +2,8 @@
 
 Projeto simples de chat por vídeo usando WebRTC e Socket.IO.
 
+Este projeto também inclui medidas básicas de segurança no servidor, como cabeçalhos de proteção e políticas de conteúdo.
+
 ## Como usar
 
 1. Abra um terminal em `c:\Users\igor.floriani\Desktop\Nova pasta`
