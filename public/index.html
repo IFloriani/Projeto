@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat de Vídeo Aleatório</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <h1>Chat de Vídeo Aleatório</h1>
+        <p>Conecte-se a outra pessoa e converse por vídeo. Você será pareado automaticamente.</p>
+      </header>
+
+      <main>
+        <section class="videos">
+          <div class="video-card">
+            <h2>Minha câmera</h2>
+            <video id="localVideo" autoplay muted playsinline></video>
+          </div>
+          <div class="video-card">
+            <h2>Parceiro</h2>
+            <video id="remoteVideo" autoplay playsinline></video>
+          </div>
+        </section>
+
+        <div class="camera-control">
+          <label for="cameraSelect">Escolher câmera</label>
+          <select id="cameraSelect"></select>
+        </div>
+
+        <div class="status-box">
+          <p id="status">Carregando...</p>
+          <button id="startButton">Iniciar conversa</button>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.1/socket.io.min.js"></script>
+    <script src="client.js"></script>
+  </body>
+</html>
